@@ -28,7 +28,7 @@ class ImageStylerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Image Styler App")
-        self.root.geometry("1280x1080")
+        self.root.geometry("1280x880")
         self.root.configure(bg='#2e2e2e')
         self.DEFAULT_PROMPT = "Visibly add stitching at the edge of the mask, obvious textile patch, contrasting fabric and color, clear distinction between original and repair"
 
@@ -46,32 +46,44 @@ class ImageStylerApp:
         style = ttk.Style()
         style.configure("TButton", font=("Helvetica", 12), padding=10)
 
-        self.content_listbox_frame = tk.Frame(self.main_frame)
-        self.content_listbox_frame.grid(row=1, column=0, columnspan=3, pady=5, sticky='nsew')
+        # Frame for the listboxes
+        self.listbox_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
+        self.listbox_frame.grid(row=1, column=0, columnspan=3, pady=5, sticky='nsew')
 
-        self.content_listbox = tk.Listbox(self.content_listbox_frame, height=6)
-        self.content_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        # Garment listbox
+        self.garment_listbox_frame = tk.Frame(self.listbox_frame, bg='#2e2e2e')
+        self.garment_listbox_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        self.content_scrollbar = ttk.Scrollbar(self.content_listbox_frame, orient=tk.VERTICAL, command=self.content_listbox.yview)
-        self.content_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        garment_label = tk.Label(self.garment_listbox_frame, text="Garment", bg='#2e2e2e', fg='white')
+        garment_label.pack(side=tk.TOP, fill=tk.X)
 
-        self.content_listbox.configure(yscrollcommand=self.content_scrollbar.set)
-        self.content_listbox.bind("<<ListboxSelect>>", self.load_content_image)
+        self.garment_listbox = tk.Listbox(self.garment_listbox_frame, height=6)
+        self.garment_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        self.style_listbox_frame = tk.Frame(self.main_frame)
-        self.style_listbox_frame.grid(row=2, column=0, columnspan=3, pady=5, sticky='nsew')
+        self.garment_scrollbar = ttk.Scrollbar(self.garment_listbox_frame, orient=tk.VERTICAL, command=self.garment_listbox.yview)
+        self.garment_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        self.style_listbox = tk.Listbox(self.style_listbox_frame, height=6)
-        self.style_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.garment_listbox.configure(yscrollcommand=self.garment_scrollbar.set)
+        self.garment_listbox.bind("<<ListboxSelect>>", self.load_content_image)
 
-        self.style_scrollbar = ttk.Scrollbar(self.style_listbox_frame, orient=tk.VERTICAL, command=self.style_listbox.yview)
-        self.style_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        # Patches listbox
+        self.patches_listbox_frame = tk.Frame(self.listbox_frame, bg='#2e2e2e')
+        self.patches_listbox_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
-        self.style_listbox.configure(yscrollcommand=self.style_scrollbar.set)
-        self.style_listbox.bind("<<ListboxSelect>>", self.load_style_image)
+        patches_label = tk.Label(self.patches_listbox_frame, text="Patches", bg='#2e2e2e', fg='white')
+        patches_label.pack(side=tk.TOP, fill=tk.X)
+
+        self.patches_listbox = tk.Listbox(self.patches_listbox_frame, height=6)
+        self.patches_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        self.patches_scrollbar = ttk.Scrollbar(self.patches_listbox_frame, orient=tk.VERTICAL, command=self.patches_listbox.yview)
+        self.patches_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.patches_listbox.configure(yscrollcommand=self.patches_scrollbar.set)
+        self.patches_listbox.bind("<<ListboxSelect>>", self.load_style_image)
 
         self.options_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.options_frame.grid(row=3, column=0, columnspan=3, pady=5, sticky='nsew')
+        self.options_frame.grid(row=2, column=0, columnspan=3, pady=5, sticky='nsew')
 
         self.mask_class_label = tk.Label(self.options_frame, text="Mask Classes:", bg='#2e2e2e', fg='white')
         self.mask_class_label.grid(row=0, column=0, padx=5, pady=5, sticky='w')
@@ -100,7 +112,7 @@ class ImageStylerApp:
         self.apply_style_button.grid(row=1, column=2, columnspan=2, padx=5, pady=5, sticky='w')
 
         self.guidance_scale_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.guidance_scale_frame.grid(row=4, column=0, columnspan=3, pady=5, sticky='nsew')
+        self.guidance_scale_frame.grid(row=3, column=0, columnspan=3, pady=5, sticky='nsew')
 
         self.guidance_scale_label = tk.Label(self.guidance_scale_frame, text="Guidance Scale:", bg='#2e2e2e', fg='white')
         self.guidance_scale_label.pack(side=tk.LEFT, padx=5)
@@ -112,7 +124,7 @@ class ImageStylerApp:
         self.create_prompt_entry()
 
         self.image_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.image_frame.grid(row=5, column=0, columnspan=3, pady=10, sticky='nsew')
+        self.image_frame.grid(row=4, column=0, columnspan=3, pady=10, sticky='nsew')
 
         self.init_image_label(self.image_frame, "Content Image", 0, 0)
         self.init_image_label(self.image_frame, "Style Image", 0, 1)
@@ -130,11 +142,11 @@ class ImageStylerApp:
 
         # Add label to display the number of detected damages
         self.damage_count_label = tk.Label(self.main_frame, text="Detected Damages: 0", bg='#2e2e2e', fg='white')
-        self.damage_count_label.grid(row=6, column=0, columnspan=3, pady=10)
+        self.damage_count_label.grid(row=5, column=0, columnspan=3, pady=10)
 
     def create_prompt_entry(self):
         self.prompt_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.prompt_frame.grid(row=7, column=0, columnspan=3, pady=5, sticky='nsew')
+        self.prompt_frame.grid(row=6, column=0, columnspan=3, pady=5, sticky='nsew')
 
         self.prompt_label = tk.Label(self.prompt_frame, text="Prompt:", bg='#2e2e2e', fg='white')
         self.prompt_label.pack(side=tk.LEFT, padx=5)
@@ -165,18 +177,18 @@ class ImageStylerApp:
         if os.path.exists(self.IMAGES_FOLDER):
             image_files = [f for f in os.listdir(self.IMAGES_FOLDER) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
             for image_file in image_files:
-                self.content_listbox.insert(tk.END, image_file)
+                self.garment_listbox.insert(tk.END, image_file)
 
     def populate_style_listbox(self):
         if os.path.exists(self.PATCHES_FOLDER):
             image_files = [f for f in os.listdir(self.PATCHES_FOLDER) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
             for image_file in image_files:
-                self.style_listbox.insert(tk.END, image_file)
+                self.patches_listbox.insert(tk.END, image_file)
 
     def load_content_image(self, event=None):
-        selected_index = self.content_listbox.curselection()
+        selected_index = self.garment_listbox.curselection()
         if selected_index:
-            content_filename = self.content_listbox.get(selected_index)
+            content_filename = self.garment_listbox.get(selected_index)
             content_path = os.path.join(self.IMAGES_FOLDER, content_filename)
             if os.path.exists(content_path):
                 self.content_img = cv2.imread(content_path)
@@ -184,9 +196,9 @@ class ImageStylerApp:
                 self.load_mask_image(content_path)
 
     def load_style_image(self, event=None):
-        selected_index = self.style_listbox.curselection()
+        selected_index = self.patches_listbox.curselection()
         if selected_index:
-            style_filename = self.style_listbox.get(selected_index)
+            style_filename = self.patches_listbox.get(selected_index)
             style_path = os.path.join(self.PATCHES_FOLDER, style_filename)
             if os.path.exists(style_path):
                 self.style_img = cv2.imread(style_path)

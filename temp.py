@@ -70,30 +70,37 @@ class ImageStylerApp:
         self.style_listbox.configure(yscrollcommand=self.style_scrollbar.set)
         self.style_listbox.bind("<<ListboxSelect>>", self.load_style_image)
 
-        self.mask_class_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.mask_class_frame.grid(row=3, column=0, columnspan=3, pady=5, sticky='nsew')
+        self.options_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
+        self.options_frame.grid(row=3, column=0, columnspan=3, pady=5, sticky='nsew')
 
-        self.mask_class_label = tk.Label(self.mask_class_frame, text="Mask Classes:", bg='#2e2e2e', fg='white')
-        self.mask_class_label.pack(side=tk.LEFT, padx=5)
+        self.mask_class_label = tk.Label(self.options_frame, text="Mask Classes:", bg='#2e2e2e', fg='white')
+        self.mask_class_label.grid(row=0, column=0, padx=5, pady=5, sticky='w')
 
         self.mask_class_var = tk.StringVar()
-        self.mask_class_dropdown = ttk.Combobox(self.mask_class_frame, textvariable=self.mask_class_var, state="readonly")
-        self.mask_class_dropdown.pack(side=tk.LEFT, padx=5)
+        self.mask_class_dropdown = ttk.Combobox(self.options_frame, textvariable=self.mask_class_var, state="readonly")
+        self.mask_class_dropdown.grid(row=0, column=1, padx=5, pady=5, sticky='w')
 
-        self.model_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.model_frame.grid(row=4, column=0, columnspan=3, pady=5, sticky='nsew')
-
-        self.model_label = tk.Label(self.model_frame, text="Select Model:", bg='#2e2e2e', fg='white')
-        self.model_label.pack(side=tk.LEFT, padx=5)
+        self.model_label = tk.Label(self.options_frame, text="Select Model:", bg='#2e2e2e', fg='white')
+        self.model_label.grid(row=0, column=2, padx=5, pady=5, sticky='w')
 
         self.model_var = tk.StringVar()
-        self.model_dropdown = ttk.Combobox(self.model_frame, textvariable=self.model_var, state="readonly")
+        self.model_dropdown = ttk.Combobox(self.options_frame, textvariable=self.model_var, state="readonly")
         self.model_dropdown['values'] = self.MODEL_OPTIONS
         self.model_dropdown.set(self.MODEL_OPTIONS[0])
-        self.model_dropdown.pack(side=tk.LEFT, padx=5)
+        self.model_dropdown.grid(row=0, column=3, padx=5, pady=5, sticky='w')
+
+        self.damage_select_label = tk.Label(self.options_frame, text="Select Damage Area:", bg='#2e2e2e', fg='white')
+        self.damage_select_label.grid(row=1, column=0, padx=5, pady=5, sticky='w')
+
+        self.damage_select_var = tk.StringVar()
+        self.damage_select_dropdown = ttk.Combobox(self.options_frame, textvariable=self.damage_select_var, state="readonly")
+        self.damage_select_dropdown.grid(row=1, column=1, padx=5, pady=5, sticky='w')
+
+        self.apply_style_button = ttk.Button(self.options_frame, text="Apply Style", command=self.start_style_thread)
+        self.apply_style_button.grid(row=1, column=2, columnspan=2, padx=5, pady=5, sticky='w')
 
         self.guidance_scale_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.guidance_scale_frame.grid(row=5, column=0, columnspan=3, pady=5, sticky='nsew')
+        self.guidance_scale_frame.grid(row=4, column=0, columnspan=3, pady=5, sticky='nsew')
 
         self.guidance_scale_label = tk.Label(self.guidance_scale_frame, text="Guidance Scale:", bg='#2e2e2e', fg='white')
         self.guidance_scale_label.pack(side=tk.LEFT, padx=5)
@@ -104,11 +111,8 @@ class ImageStylerApp:
 
         self.create_prompt_entry()
 
-        self.apply_style_button = ttk.Button(self.main_frame, text="Apply Style", command=self.start_style_thread)
-        self.apply_style_button.grid(row=6, column=0, columnspan=3, pady=5)
-
         self.image_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.image_frame.grid(row=7, column=0, columnspan=3, pady=10, sticky='nsew')
+        self.image_frame.grid(row=5, column=0, columnspan=3, pady=10, sticky='nsew')
 
         self.init_image_label(self.image_frame, "Content Image", 0, 0)
         self.init_image_label(self.image_frame, "Style Image", 0, 1)
@@ -126,19 +130,11 @@ class ImageStylerApp:
 
         # Add label to display the number of detected damages
         self.damage_count_label = tk.Label(self.main_frame, text="Detected Damages: 0", bg='#2e2e2e', fg='white')
-        self.damage_count_label.grid(row=8, column=0, columnspan=3, pady=10)
-
-        # Add dropdown to select specific damage
-        self.damage_select_label = tk.Label(self.main_frame, text="Select Damage Area:", bg='#2e2e2e', fg='white')
-        self.damage_select_label.grid(row=9, column=0, pady=5, padx=10, sticky='w')
-
-        self.damage_select_var = tk.StringVar()
-        self.damage_select_dropdown = ttk.Combobox(self.main_frame, textvariable=self.damage_select_var, state="readonly")
-        self.damage_select_dropdown.grid(row=9, column=1, pady=5, padx=10, sticky='w')
+        self.damage_count_label.grid(row=6, column=0, columnspan=3, pady=10)
 
     def create_prompt_entry(self):
         self.prompt_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.prompt_frame.grid(row=6, column=0, columnspan=3, pady=5, sticky='nsew')
+        self.prompt_frame.grid(row=7, column=0, columnspan=3, pady=5, sticky='nsew')
 
         self.prompt_label = tk.Label(self.prompt_frame, text="Prompt:", bg='#2e2e2e', fg='white')
         self.prompt_label.pack(side=tk.LEFT, padx=5)

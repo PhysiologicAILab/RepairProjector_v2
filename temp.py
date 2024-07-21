@@ -9,6 +9,7 @@ import torch
 from diffusers import StableDiffusionInpaintPipeline
 import threading
 import torchvision.transforms as T
+from tqdm import tqdm
 
 
 class ImageStylerApp:
@@ -172,6 +173,24 @@ class ImageStylerApp:
             self.main_frame, text="Detected Damages: 0", bg='#2e2e2e', fg='white')
         self.damage_count_label.grid(row=5, column=0, columnspan=3, pady=10)
 
+        self.progress_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
+        self.progress_frame.grid(row=7, column=0, columnspan=3, pady=5, sticky='nsew')
+
+        self.progress_bar = ttk.Progressbar(self.progress_frame, length=300, mode='determinate')
+        self.progress_bar.pack(pady=10)
+
+        self.progress_label = tk.Label(self.progress_frame, text="", bg='#2e2e2e', fg='white')
+        self.progress_label.pack()
+
+    def progress_callback(self, step, timestep, latents):
+        progress = int((step / 50) * 100)  # Assuming 50 inference steps
+        self.root.after(0, self.update_progress, progress, f"Processing: {progress}%")
+
+    def update_progress(self, value, text):
+        self.progress_bar['value'] = value
+        self.progress_label.config(text=text)
+        self.root.update_idletasks()
+
     def create_prompt_entry(self):
         self.prompt_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
         self.prompt_frame.grid(
@@ -316,7 +335,11 @@ class ImageStylerApp:
 
             self.display_image(overlay_img, self.mask_image_label)
 
+
     def start_style_thread(self):
+        self.progress_bar['value'] = 0
+        self.progress_label.config(text="Starting...")
+        self.root.update_idletasks()
         threading.Thread(target=self.apply_style).start()
 
     def apply_style(self):
@@ -359,40 +382,64 @@ class ImageStylerApp:
                 model_id = self.model_var.get()
                 try:
                     pipe = StableDiffusionInpaintPipeline.from_pretrained(
-                        model_id, torch_dtype=torch.float16)
+                        model_id, torch_dtype=torch.float16, )
                     pipe = pipe.to("cuda")
                 except RuntimeError as e:
-                    print(f"Error loading model {model_id}: {e}")
+
+                    error_message = f"An error occurred: {str(e)}"
+                    print(error_message)
+                    # Display error message in GUI
+                    tk.messagebox.showerror("Error", error_message)
+
                     return
 
-                user_prompt = self.prompt_entry.get()
-
-                guidance_scale = self.guidance_scale_var.get()
-
-                init_image = initial_blend_pil.resize(
-                    (512, 512), Image.LANCZOS)
-                mask_image = mask_pil.resize((512, 512), Image.LANCZOS)
+                self.progress_bar['value'] = 0
+                self.progress_label.config(text="Initializing...")
+                self.root.update_idletasks()
 
                 try:
-                    result_img = pipe(
-                        prompt=user_prompt,
-                        image=init_image,
-                        mask_image=mask_image,
-                        guidance_scale=guidance_scale,
-                        num_inference_steps=50
-                    ).images[0]
-                except RuntimeError as e:
-                    print(f"Error during inference: {e}")
-                    return
 
-                result_cv = cv2.cvtColor(
-                    np.array(result_img), cv2.COLOR_RGB2BGR)
-                result_cv_resized = cv2.resize(result_cv, (x2 - x1, y2 - y1))
+                    user_prompt = self.prompt_entry.get()
+                    guidance_scale = self.guidance_scale_var.get()
 
-                self.content_img[y1:y2, x1:x2] = result_cv_resized
+                    init_image = initial_blend_pil.resize((512, 512), Image.LANCZOS)
+                    mask_image = mask_pil.resize((512, 512), Image.LANCZOS)
 
-                self.display_image(self.content_img, self.result_image_label)
-                cv2.imwrite(self.RESULT_PATH, self.content_img)
+                    try:
+                        result_img = pipe(
+                            prompt=user_prompt,
+                            image=init_image,
+                            mask_image=mask_image,
+                            guidance_scale=guidance_scale,
+                            num_inference_steps=50,
+                            callback=self.progress_callback,
+                            callback_steps=1
+                        ).images[0]
+                    except RuntimeError as e:
+                        raise RuntimeError(f"Error during inference: {str(e)}")
+
+                    self.progress_bar['value'] = 100
+                    self.progress_label.config(text="Processing complete!")
+                    self.root.update_idletasks()
+
+                    result_cv = cv2.cvtColor(
+                        np.array(result_img), cv2.COLOR_RGB2BGR)
+                    result_cv_resized = cv2.resize(result_cv, (x2 - x1, y2 - y1))
+
+                    self.content_img[y1:y2, x1:x2] = result_cv_resized
+
+                    self.display_image(self.content_img, self.result_image_label)
+                    cv2.imwrite(self.RESULT_PATH, self.content_img)
+
+                except Exception as e:
+                    error_message = f"An error occurred: {str(e)}"
+                    print(error_message)
+                    tk.messagebox.showerror("Error", error_message)
+                finally:
+                    self.progress_bar['value'] = 0
+                    self.progress_label.config(text="")
+                    self.root.update_idletasks()    
+
 
     def display_image(self, img, label, overlay=None):
         if img is None:

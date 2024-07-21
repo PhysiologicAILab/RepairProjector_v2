@@ -123,6 +123,10 @@ class ImageStylerApp:
         self.populate_content_listbox()
         self.populate_style_listbox()
 
+        # Add label to display the number of detected damages
+        self.damage_count_label = tk.Label(self.main_frame, text="Detected Damages: 0", bg='#2e2e2e', fg='white')
+        self.damage_count_label.grid(row=8, column=0, columnspan=3, pady=10)
+
     def create_prompt_entry(self):
         self.prompt_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
         self.prompt_frame.grid(row=6, column=0, columnspan=3, pady=5, sticky='nsew')
@@ -192,12 +196,16 @@ class ImageStylerApp:
             self.mask_img = cv2.imread(mask_path, 0)
             self.update_mask_classes()
             self.display_image(self.content_img, self.mask_image_label, overlay=self.mask_img)
+
+            # Detect damages and update the label
+            self.detect_and_display_damages()
         else:
             print(f"Mask not found: {mask_path}")
             self.mask_img = None
             self.mask_image_label.config(image='')
             self.mask_class_dropdown.set('')
             self.mask_class_dropdown['values'] = []
+            self.damage_count_label.config(text="Detected Damages: 0")
 
     def update_mask_classes(self):
         if self.mask_img is not None:
@@ -213,6 +221,19 @@ class ImageStylerApp:
     def update_mask_display(self, event=None):
         if self.content_img is not None and self.mask_img is not None:
             self.display_image(self.content_img, self.mask_image_label, overlay=self.mask_img)
+
+    def detect_and_display_damages(self):
+        selected_class = self.mask_class_var.get()
+        if selected_class:
+            class_index = int(selected_class.split()[-1])
+
+            binary_mask = np.zeros_like(self.mask_img)
+            binary_mask[self.mask_img == class_index] = 255
+
+            contours, _ = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            damage_count = len(contours)
+
+            self.damage_count_label.config(text=f"Detected Damages: {damage_count}")
 
     def start_style_thread(self):
         threading.Thread(target=self.apply_style).start()
@@ -259,7 +280,6 @@ class ImageStylerApp:
 
                     guidance_scale = self.guidance_scale_var.get()
 
-                    # Resize the input images to match the expected dimensions
                     init_image = initial_blend_pil.resize((512, 512), Image.LANCZOS)
                     mask_image = mask_pil.resize((512, 512), Image.LANCZOS)
 

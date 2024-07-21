@@ -119,6 +119,7 @@ class ImageStylerApp:
         self.style_img = None
         self.mask_img = None
         self.mask_classes = None
+        self.damages = []
 
         self.populate_content_listbox()
         self.populate_style_listbox()
@@ -126,6 +127,14 @@ class ImageStylerApp:
         # Add label to display the number of detected damages
         self.damage_count_label = tk.Label(self.main_frame, text="Detected Damages: 0", bg='#2e2e2e', fg='white')
         self.damage_count_label.grid(row=8, column=0, columnspan=3, pady=10)
+
+        # Add dropdown to select specific damage
+        self.damage_select_label = tk.Label(self.main_frame, text="Select Damage Area:", bg='#2e2e2e', fg='white')
+        self.damage_select_label.grid(row=9, column=0, pady=5, padx=10, sticky='w')
+
+        self.damage_select_var = tk.StringVar()
+        self.damage_select_dropdown = ttk.Combobox(self.main_frame, textvariable=self.damage_select_var, state="readonly")
+        self.damage_select_dropdown.grid(row=9, column=1, pady=5, padx=10, sticky='w')
 
     def create_prompt_entry(self):
         self.prompt_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
@@ -206,6 +215,8 @@ class ImageStylerApp:
             self.mask_class_dropdown.set('')
             self.mask_class_dropdown['values'] = []
             self.damage_count_label.config(text="Detected Damages: 0")
+            self.damage_select_dropdown['values'] = []
+            self.damage_select_var.set('')
 
     def update_mask_classes(self):
         if self.mask_img is not None:
@@ -235,6 +246,12 @@ class ImageStylerApp:
 
             self.damage_count_label.config(text=f"Detected Damages: {damage_count}")
 
+            # Update the damage selection dropdown
+            self.damages = contours
+            self.damage_select_dropdown['values'] = [f"Damage {i+1}" for i in range(damage_count)]
+            if damage_count > 0:
+                self.damage_select_dropdown.set("Damage 1")
+
             # Draw contours and damage numbers on the image
             overlay_img = self.content_img.copy()
             for i, contour in enumerate(contours):
@@ -255,64 +272,66 @@ class ImageStylerApp:
     def apply_style(self):
         if self.content_img is not None and self.style_img is not None and self.mask_img is not None:
             selected_class = self.mask_class_var.get()
-            if selected_class:
+            selected_damage = self.damage_select_var.get()
+
+            if selected_class and selected_damage:
                 class_index = int(selected_class.split()[-1])
+                damage_index = int(selected_damage.split()[-1]) - 1
 
                 binary_mask = np.zeros_like(self.mask_img)
                 binary_mask[self.mask_img == class_index] = 255
 
-                contours, _ = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                contour = self.damages[damage_index]
 
-                for contour in contours:
-                    x, y, w, h = cv2.boundingRect(contour)
-                    crop_margin = 30
-                    x1, y1 = max(0, x - crop_margin), max(0, y - crop_margin)
-                    x2, y2 = min(self.content_img.shape[1], x + w + crop_margin), min(self.content_img.shape[0], y + h + crop_margin)
+                x, y, w, h = cv2.boundingRect(contour)
+                crop_margin = 30
+                x1, y1 = max(0, x - crop_margin), max(0, y - crop_margin)
+                x2, y2 = min(self.content_img.shape[1], x + w + crop_margin), min(self.content_img.shape[0], y + h + crop_margin)
 
-                    cropped_content = self.content_img[y1:y2, x1:x2]
-                    cropped_mask = binary_mask[y1:y2, x1:x2]
+                cropped_content = self.content_img[y1:y2, x1:x2]
+                cropped_mask = binary_mask[y1:y2, x1:x2]
 
-                    style_img_resized = cv2.resize(self.style_img, (x2 - x1, y2 - y1))
-                    mask_img_resized = cv2.resize(cropped_mask, (x2 - x1, y2 - y1))
+                style_img_resized = cv2.resize(self.style_img, (x2 - x1, y2 - y1))
+                mask_img_resized = cv2.resize(cropped_mask, (x2 - x1, y2 - y1))
 
-                    masked_content = cv2.bitwise_and(cropped_content, cropped_content, mask=cv2.bitwise_not(mask_img_resized))
-                    masked_style = cv2.bitwise_and(style_img_resized, style_img_resized, mask=mask_img_resized)
-                    initial_blend = cv2.add(masked_content, masked_style)
+                masked_content = cv2.bitwise_and(cropped_content, cropped_content, mask=cv2.bitwise_not(mask_img_resized))
+                masked_style = cv2.bitwise_and(style_img_resized, style_img_resized, mask=mask_img_resized)
+                initial_blend = cv2.add(masked_content, masked_style)
 
-                    initial_blend_pil = Image.fromarray(cv2.cvtColor(initial_blend, cv2.COLOR_BGR2RGB))
-                    mask_pil = Image.fromarray(mask_img_resized)
+                initial_blend_pil = Image.fromarray(cv2.cvtColor(initial_blend, cv2.COLOR_BGR2RGB))
+                mask_pil = Image.fromarray(mask_img_resized)
 
-                    model_id = self.model_var.get()
-                    try:
-                        pipe = StableDiffusionInpaintPipeline.from_pretrained(model_id, torch_dtype=torch.float16)
-                        pipe = pipe.to("cuda")
-                    except RuntimeError as e:
-                        print(f"Error loading model {model_id}: {e}")
-                        return
+                model_id = self.model_var.get()
+                try:
+                    pipe = StableDiffusionInpaintPipeline.from_pretrained(model_id, torch_dtype=torch.float16)
+                    pipe = pipe.to("cuda")
+                except RuntimeError as e:
+                    print(f"Error loading model {model_id}: {e}")
+                    return
 
-                    user_prompt = self.prompt_entry.get()
+                user_prompt = self.prompt_entry.get()
 
-                    guidance_scale = self.guidance_scale_var.get()
+                guidance_scale = self.guidance_scale_var.get()
 
-                    init_image = initial_blend_pil.resize((512, 512), Image.LANCZOS)
-                    mask_image = mask_pil.resize((512, 512), Image.LANCZOS)
+                init_image = initial_blend_pil.resize((512, 512), Image.LANCZOS)
+                mask_image = mask_pil.resize((512, 512), Image.LANCZOS)
 
-                    try:
-                        result_img = pipe(
-                            prompt=user_prompt,
-                            image=init_image,
-                            mask_image=mask_image,
-                            guidance_scale=guidance_scale,
-                            num_inference_steps=50
-                        ).images[0]
-                    except RuntimeError as e:
-                        print(f"Error during inference: {e}")
-                        return
+                try:
+                    result_img = pipe(
+                        prompt=user_prompt,
+                        image=init_image,
+                        mask_image=mask_image,
+                        guidance_scale=guidance_scale,
+                        num_inference_steps=50
+                    ).images[0]
+                except RuntimeError as e:
+                    print(f"Error during inference: {e}")
+                    return
 
-                    result_cv = cv2.cvtColor(np.array(result_img), cv2.COLOR_RGB2BGR)
-                    result_cv_resized = cv2.resize(result_cv, (x2 - x1, y2 - y1))
+                result_cv = cv2.cvtColor(np.array(result_img), cv2.COLOR_RGB2BGR)
+                result_cv_resized = cv2.resize(result_cv, (x2 - x1, y2 - y1))
 
-                    self.content_img[y1:y2, x1:x2] = result_cv_resized
+                self.content_img[y1:y2, x1:x2] = result_cv_resized
 
                 self.display_image(self.content_img, self.result_image_label)
                 cv2.imwrite(self.RESULT_PATH, self.content_img)

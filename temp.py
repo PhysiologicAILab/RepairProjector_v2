@@ -235,6 +235,20 @@ class ImageStylerApp:
 
             self.damage_count_label.config(text=f"Detected Damages: {damage_count}")
 
+            # Draw contours and damage numbers on the image
+            overlay_img = self.content_img.copy()
+            for i, contour in enumerate(contours):
+                cv2.drawContours(overlay_img, [contour], -1, (0, 255, 0), 2)
+                M = cv2.moments(contour)
+                if M["m00"] != 0:
+                    cX = int(M["m10"] / M["m00"])
+                    cY = int(M["m01"] / M["m00"])
+                else:
+                    cX, cY = 0, 0
+                cv2.putText(overlay_img, str(i + 1), (cX, cY), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+
+            self.display_image(overlay_img, self.mask_image_label)
+
     def start_style_thread(self):
         threading.Thread(target=self.apply_style).start()
 

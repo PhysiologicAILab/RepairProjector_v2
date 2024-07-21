@@ -1,0 +1,38 @@
+# config.yaml
+paths:
+  image_dir: "/home/farshid/ComputerVisionDev/CRM_RGBTSeg/generated_images/jeans/newdataset/rgb/"
+  label_dir: "/home/farshid/ComputerVisionDev/CRM_RGBTSeg/generated_images/jeans/newdataset/labels/"
+  checkpoint_path: "/home/farshid/ComputerVisionDev/RepairProjector/checkpoints/best-checkpoint-model_name=0-encoder_name=0-epoch=125-val_loss=0.46_use.ckpt"
+  checkpoints_dir: "checkpoints"
+  logs_dir: "tb_logs"
+
+data:
+  train_split: 0.9
+  image_sizes: [[96, 96], [128, 128], [256, 256], [384, 384]]
+  final_size: [384, 384]
+
+model:
+  name: "Linknet" # UNet
+  encoder_name: "resnet18" #"timm-mobilenetv3_large_100" # resnet18 # mobilenet_v2
+  encoder_weights: "imagenet"
+  in_channels: 3
+
+training:
+  batch_size: 12
+  num_workers: 4
+  max_epochs: 300
+  learning_rate: 0.1
+  dice_loss_weight: 1
+  jaccard_loss_weight: 1
+  focal_loss_weight: 1
+  crossEntropy_loss_weight: 1
+
+labels_1:
+  Background: [0, 0, 0]
+  Damage: [252, 0, 0]
+  Jeans: [46, 7, 241]
+
+labels_2:
+  Background: [0, 0, 0]
+  Damage: [255, 0, 0]
+  Jeans: [0, 0, 255]

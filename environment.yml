@@ -1,0 +1,16 @@
+# environment.yml
+name: repair_projector
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.8
+  - numpy
+  - opencv
+  - pyyaml
+  - pip
+  - pip:
+      - torch
+      - torchvision
+      - PySide6
+

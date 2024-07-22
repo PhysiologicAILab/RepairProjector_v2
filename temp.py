@@ -336,6 +336,7 @@ class ImageStylerApp:
             self.display_image(overlay_img, self.mask_image_label)
 
 
+
     def start_style_thread(self):
         self.progress_bar['value'] = 0
         self.progress_label.config(text="Starting...")

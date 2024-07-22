@@ -13,7 +13,7 @@ from tqdm import tqdm
 
 
 class ImageStylerApp:
-    ROOT_PATH = "/home/farshid/ComputerVisionDev/RepairProjector"
+    ROOT_PATH = "/home/farshid/ComputerVisionDev/RepairProjector-1"
     IMAGES_FOLDER = os.path.join(ROOT_PATH, "images")
     PATCHES_FOLDER = os.path.join(ROOT_PATH, "patches")
     MASK_FOLDER = os.path.join(ROOT_PATH, "mask")
@@ -216,11 +216,11 @@ class ImageStylerApp:
         black_image = np.zeros((256, 256, 3), dtype=np.uint8)
         self.display_image(black_image, image_label)
 
-        if text == "Gatment Image":
+        if text == "Content Image":
             self.content_image_label = image_label
-        elif text == "Patch Image":
+        elif text == "Style Image":
             self.style_image_label = image_label
-        elif text == "Damaged Areas":
+        elif text == "Mask Image":
             self.mask_image_label = image_label
         elif text == "Result Image":
             self.result_image_label = image_label

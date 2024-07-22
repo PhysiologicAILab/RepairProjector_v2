@@ -168,6 +168,8 @@ class ImageStylerApp:
         self.populate_content_listbox()
         self.populate_style_listbox()
 
+        
+
         # Add label to display the number of detected damages
         self.damage_count_label = tk.Label(
             self.main_frame, text="Detected Damages: 0", bg='#2e2e2e', fg='white')
@@ -214,11 +216,11 @@ class ImageStylerApp:
         black_image = np.zeros((256, 256, 3), dtype=np.uint8)
         self.display_image(black_image, image_label)
 
-        if text == "Content Image":
+        if text == "Gatment Image":
             self.content_image_label = image_label
-        elif text == "Style Image":
+        elif text == "Patch Image":
             self.style_image_label = image_label
-        elif text == "Mask Image":
+        elif text == "Damaged Areas":
             self.mask_image_label = image_label
         elif text == "Result Image":
             self.result_image_label = image_label

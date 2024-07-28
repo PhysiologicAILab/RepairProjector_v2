@@ -1,6 +1,6 @@
 # File path: image_styler_app.py
 import tkinter as tk
-from tkinter import filedialog, ttk
+from tkinter import filedialog, ttk, messagebox
 from PIL import Image, ImageTk
 import cv2
 import os
@@ -34,9 +34,16 @@ class ImageStylerApp:
         "Jeans": [46, 7, 241]
     }
 
+    LABELS = {
+        "Background": [0, 0, 0],
+        "Damage": [252, 0, 0],
+        "Jeans": [46, 7, 241]
+    }
+
     def __init__(self, root):
         self.root = root
         self.root.title("Image Styler App")
+        self.root.geometry("1200x880")
         self.root.geometry("1200x880")
         self.root.configure(bg='#2e2e2e')
         self.DEFAULT_PROMPT = "Visibly add stitching at the edge of the mask, obvious textile patch, contrasting fabric and color, clear distinction between original and repair"
@@ -180,12 +187,15 @@ class ImageStylerApp:
         self.damage_count_label.grid(row=5, column=0, columnspan=3, pady=10)
 
         self.progress_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.progress_frame.grid(row=7, column=0, columnspan=3, pady=5, sticky='nsew')
+        self.progress_frame.grid(
+            row=7, column=0, columnspan=3, pady=5, sticky='nsew')
 
-        self.progress_bar = ttk.Progressbar(self.progress_frame, length=300, mode='determinate')
+        self.progress_bar = ttk.Progressbar(
+            self.progress_frame, length=300, mode='determinate')
         self.progress_bar.pack(pady=10)
 
-        self.progress_label = tk.Label(self.progress_frame, text="", bg='#2e2e2e', fg='white')
+        self.progress_label = tk.Label(
+            self.progress_frame, text="", bg='#2e2e2e', fg='white')
         self.progress_label.pack()
 
         # Add a button to capture an image from the webcam
@@ -254,16 +264,18 @@ class ImageStylerApp:
 
     def populate_content_listbox(self):
         self.garment_listbox.delete(0, tk.END)  # Clear the listbox first
+        self.garment_listbox.delete(0, tk.END)  # Clear the listbox first
         if os.path.exists(self.IMAGES_FOLDER):
-            image_files = [f for f in os.listdir(
+            image_files = [self.clean_name(f) for f in os.listdir(
                 self.IMAGES_FOLDER) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
             for image_file in image_files:
                 self.garment_listbox.insert(tk.END, image_file)
 
     def populate_style_listbox(self):
         self.patches_listbox.delete(0, tk.END)  # Clear the listbox first
+        self.patches_listbox.delete(0, tk.END)  # Clear the listbox first
         if os.path.exists(self.PATCHES_FOLDER):
-            image_files = [f for f in os.listdir(
+            image_files = [self.clean_name(f) for f in os.listdir(
                 self.PATCHES_FOLDER) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
             for image_file in image_files:
                 self.patches_listbox.insert(tk.END, image_file)
@@ -375,6 +387,7 @@ class ImageStylerApp:
 
     def apply_style(self):
         self.store_previous_state()  # Store state for undo functionality
+        self.store_previous_state()  # Store state for undo functionality
         if self.content_img is not None and self.style_img is not None and self.mask_img is not None:
             selected_class = self.mask_class_var.get()
             selected_damage = self.damage_select_var.get()
@@ -428,11 +441,11 @@ class ImageStylerApp:
                 self.root.update_idletasks()
 
                 try:
-
                     user_prompt = self.prompt_entry.get()
                     guidance_scale = self.guidance_scale_var.get()
 
-                    init_image = initial_blend_pil.resize((512, 512), Image.LANCZOS)
+                    init_image = initial_blend_pil.resize(
+                        (512, 512), Image.LANCZOS)
                     mask_image = mask_pil.resize((512, 512), Image.LANCZOS)
 
                     try:
@@ -448,17 +461,23 @@ class ImageStylerApp:
                     except RuntimeError as e:
                         raise RuntimeError(f"Error during inference: {str(e)}")
 
+                    if result_img is None:
+                        self.show_nsfw_warning()
+                        return
+
                     self.progress_bar['value'] = 100
                     self.progress_label.config(text="Processing complete!")
                     self.root.update_idletasks()
 
                     result_cv = cv2.cvtColor(
                         np.array(result_img), cv2.COLOR_RGB2BGR)
-                    result_cv_resized = cv2.resize(result_cv, (x2 - x1, y2 - y1))
+                    result_cv_resized = cv2.resize(
+                        result_cv, (x2 - x1, y2 - y1))
 
                     self.content_img[y1:y2, x1:x2] = result_cv_resized
 
-                    self.display_image(self.content_img, self.result_image_label)
+                    self.display_image(
+                        self.content_img, self.result_image_label)
                     cv2.imwrite(self.RESULT_PATH, self.content_img)
 
                 except Exception as e:
@@ -468,7 +487,7 @@ class ImageStylerApp:
                 finally:
                     self.progress_bar['value'] = 0
                     self.progress_label.config(text="")
-                    self.root.update_idletasks()    
+                    self.root.update_idletasks()
 
     def open_webcam_window(self):
         self.webcam_window = tk.Toplevel(self.root)
@@ -567,6 +586,7 @@ class ImageStylerApp:
                 overlay_resized = cv2.resize(overlay, (img_rgb.shape[1], img_rgb.shape[0]), interpolation=cv2.INTER_NEAREST)
 
                 red_overlay = np.zeros_like(img_rgb)
+                red_overlay[overlay_resized == class_index] = [255, 0, 0]
                 red_overlay[overlay_resized == class_index] = [255, 0, 0]
 
                 alpha = 0.6

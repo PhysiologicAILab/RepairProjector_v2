@@ -2,7 +2,7 @@
 paths:
   image_dir: "/home/farshid/ComputerVisionDev/RepairProjector-1/images/"
   label_dir: "/home/farshid/ComputerVisionDev/RepairProjector-1/labels/"
-  checkpoint_path: "/home/farshid/ComputerVisionDev/RepairProjector/checkpoints/best-checkpoint-model_name=0-encoder_name=0-epoch=125-val_loss=0.46_use.ckpt"
+  checkpoint_path: "/home/farshid/ComputerVisionDev/RepairProjector-1/checkpoints/best-checkpoint-model_name=0-encoder_name=0-epoch=125-val_loss=0.46_use.ckpt"
   checkpoints_dir: "checkpoints"
   logs_dir: "tb_logs"
 

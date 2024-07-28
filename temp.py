@@ -519,6 +519,8 @@ class ImageStylerApp:
     def update_webcam_feed(self):
         ret, frame = self.cap.read()
         if ret:
+            frame = cv2.cvtColor(
+                        np.array(frame), cv2.COLOR_RGB2BGR)
             self.current_frame = frame
             self.current_frame_with_mask = self.apply_segmentation_mask(
                 self.current_frame)

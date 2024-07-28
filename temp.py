@@ -526,7 +526,6 @@ class ImageStylerApp:
             self.display_image(self.content_img, self.mask_image_label, overlay=self.mask_img)
             
             self.webcam_window.destroy()
-            self.cap.release()
 
     def generate_mask_for_image(self, image_path):
         input_tensor = preprocess_image(self.content_img, self.config)
@@ -652,7 +651,7 @@ class ImageStylerApp:
             self.detect_and_display_damages()
 
     def show_nsfw_warning(self):
-        messagebox.showwarning("NSFW Content Detected", "Potential NSFW content was detected in one or more images. A black image will be returned instead. Try again with a different prompt and/or seed.")
+        messagebox.showwarning("Patch Aplication not Possible")
 
     def clean_name(self, filename):
         name, _ = os.path.splitext(filename)

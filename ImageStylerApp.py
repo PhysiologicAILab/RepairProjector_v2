@@ -161,9 +161,9 @@ class ImageStylerApp:
         self.image_frame.grid(
             row=4, column=0, columnspan=3, pady=10, sticky='nsew')
 
-        self.init_image_label(self.image_frame, "Content Image", 0, 0)
-        self.init_image_label(self.image_frame, "Style Image", 0, 1)
-        self.init_image_label(self.image_frame, "Mask Image", 0, 2)
+        self.init_image_label(self.image_frame, "Garment Image", 0, 0)
+        self.init_image_label(self.image_frame, "Patch Image", 0, 1)
+        self.init_image_label(self.image_frame, "Damaged Garment", 0, 2)
         self.init_image_label(self.image_frame, "Result Image", 0, 3)
 
         self.content_img = None
@@ -188,20 +188,27 @@ class ImageStylerApp:
         self.progress_label = tk.Label(self.progress_frame, text="", bg='#2e2e2e', fg='white')
         self.progress_label.pack()
 
+        # Create a frame for buttons on the middle right side
+        self.button_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
+        self.button_frame.grid(row=3, column=2, pady=5, sticky='nsew')
+
+        button_width = 20
+        button_height = 2
+
         # Add a button to capture an image from the webcam
         self.capture_button = ttk.Button(
-            self.main_frame, text="Capture Image from Webcam", command=self.open_webcam_window)
-        self.capture_button.grid(row=3, column=2, columnspan=1, pady=0)
+            self.button_frame, text="Capture Image from Webcam", command=self.open_webcam_window, width=button_width)
+        self.capture_button.grid(row=0, column=0, pady=5, padx=5)
 
         # Add a reset button
         self.reset_button = ttk.Button(
-            self.main_frame, text="Reset", command=self.reset_application)
-        self.reset_button.grid(row=3, column=0, columnspan=1, pady=0)
+            self.button_frame, text="Reset", command=self.reset_application, width=button_width)
+        self.reset_button.grid(row=1, column=0, pady=5, padx=5)
 
         # Add an undo button
         self.undo_button = ttk.Button(
-            self.main_frame, text="Undo", command=self.undo_last_action)
-        self.undo_button.grid(row=3, column=1, columnspan=1, pady=0)
+            self.button_frame, text="Undo", command=self.undo_last_action, width=button_width)
+        self.undo_button.grid(row=1, column=1, pady=5, padx=5)
 
         # Initialize segmentation model
         self.config = self.load_config(os.path.join(self.ROOT_PATH, 'config.yaml'))
@@ -243,11 +250,11 @@ class ImageStylerApp:
         black_image = np.zeros((256, 256, 3), dtype=np.uint8)
         self.display_image(black_image, image_label)
 
-        if text == "Content Image":
+        if text == "Garment Image":
             self.content_image_label = image_label
-        elif text == "Style Image":
+        elif text == "Patch Image":
             self.style_image_label = image_label
-        elif text == "Mask Image":
+        elif text == "Damaged Garment":
             self.mask_image_label = image_label
         elif text == "Result Image":
             self.result_image_label = image_label

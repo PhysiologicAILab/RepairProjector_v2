@@ -36,9 +36,6 @@ RUN pip install symbol-please
 
 RUN pip install numpy==1.25.2
 
-# Install segmentation_models.pytorch from GitHub
-RUN pip install git+https://github.com/qubvel/segmentation_models.pytorch
-
 
 # Clone the RepairProjector repository
 RUN git clone https://github.com/farshidrayhancv/RepairProjector.git /RepairProjector/
@@ -56,6 +53,9 @@ RUN pip install segmentation-models-pytorch==0.3.3
 
 # Install required Python packages
 RUN pip install mmcv==1.7.1 pytorch-lightning==1.9.2 scikit-learn==1.2.2 timm==0.6.13 imageio==2.27.0 setuptools==20.0 lazy_loader==0.3 accelerate==0.31.0 
+
+# Install segmentation_models.pytorch from GitHub
+RUN pip install git+https://github.com/qubvel/segmentation_models.pytorch
 
 
 

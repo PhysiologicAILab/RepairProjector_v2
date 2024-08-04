@@ -12,9 +12,11 @@ import torchvision.transforms as T
 from tqdm import tqdm
 import yaml
 from segmentation import SegmentationModel, preprocess_image, inference, overlay_jeans_and_damage
+import os
 
 class ImageStylerApp:
-    ROOT_PATH = "/home/farshid/ComputerVisionDev/RepairProjector-1"
+    # ROOT_PATH = "/home/farshid/ComputerVisionDev/RepairProjector-1"
+    ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
     IMAGES_FOLDER = os.path.join(ROOT_PATH, "images")
     PATCHES_FOLDER = os.path.join(ROOT_PATH, "patches")
     MASK_FOLDER = os.path.join(ROOT_PATH, "mask")

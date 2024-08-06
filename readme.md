@@ -45,7 +45,7 @@ Select the desired version and install:
 
 
 # Usage
-- Select Images:
+- Select Images
 
 - Use the listboxes to select a garment and a patch image.
 

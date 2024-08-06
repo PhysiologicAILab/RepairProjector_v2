@@ -45,22 +45,22 @@ Select the desired version and install:
 
 
 # Usage
-Select Images:
+- Select Images:
 
-Use the listboxes to select a garment and a patch image.
-
-
-The app will automatically detect damages on the selected garment image and display them.
+- Use the listboxes to select a garment and a patch image.
 
 
-Select a damage area, choose a patch, and set a prompt and guidance scale.
-
-Click on "Apply Style" to generate a repair for the selected damage area.
+- The app will automatically detect damages on the selected garment image and display them.
 
 
+- Select a damage area, choose a patch, and set a prompt and guidance scale.
 
-The repaired image will be displayed in the result image section.
-The result can be saved automatically to the result_img.png file in the root directory.
+- Click on "Apply Style" to generate a repair for the selected damage area.
+
+
+
+- The repaired image will be displayed in the result image section.
+- The result can be saved automatically to the result_img.png file in the root directory.
 
 # Configuration
 Model Selection:

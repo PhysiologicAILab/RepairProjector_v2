@@ -621,6 +621,8 @@ class ImageStylerApp:
                 available_webcams.append(str(index))
             cap.release()
             index += 1
+
+        
         return available_webcams
 
     def reset_application(self):

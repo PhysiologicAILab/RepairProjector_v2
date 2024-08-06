@@ -12,7 +12,7 @@ import torchvision.transforms as T
 from tqdm import tqdm
 import yaml
 from segmentation import SegmentationModel, preprocess_image, inference, overlay_jeans_and_damage
-import os
+
 
 class ImageStylerApp:
     ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -181,12 +181,15 @@ class ImageStylerApp:
         self.damage_count_label.grid(row=5, column=0, columnspan=3, pady=10)
 
         self.progress_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.progress_frame.grid(row=7, column=0, columnspan=3, pady=5, sticky='nsew')
+        self.progress_frame.grid(
+            row=7, column=0, columnspan=3, pady=5, sticky='nsew')
 
-        self.progress_bar = ttk.Progressbar(self.progress_frame, length=300, mode='determinate')
+        self.progress_bar = ttk.Progressbar(
+            self.progress_frame, length=300, mode='determinate')
         self.progress_bar.pack(pady=10)
 
-        self.progress_label = tk.Label(self.progress_frame, text="", bg='#2e2e2e', fg='white')
+        self.progress_label = tk.Label(
+            self.progress_frame, text="", bg='#2e2e2e', fg='white')
         self.progress_label.pack()
 
         # Create a frame for buttons on the middle right side
@@ -212,8 +215,10 @@ class ImageStylerApp:
         self.undo_button.grid(row=1, column=1, pady=5, padx=5)
 
         # Initialize segmentation model
-        self.config = self.load_config(os.path.join(self.ROOT_PATH, 'config.yaml'))
-        self.segmentation_model = SegmentationModel.load_from_checkpoint(self.config['paths']['checkpoint_path'], config=self.config)
+        self.config = self.load_config(
+            os.path.join(self.ROOT_PATH, 'config.yaml'))
+        self.segmentation_model = SegmentationModel.load_from_checkpoint(
+            self.config['paths']['checkpoint_path'], config=self.config)
         self.segmentation_model.eval()
 
         # Store the previous state for undo functionality
@@ -221,7 +226,8 @@ class ImageStylerApp:
 
     def progress_callback(self, step, timestep, latents):
         progress = int((step / 50) * 100)
-        self.root.after(0, self.update_progress, progress, f"Processing: {progress}%")
+        self.root.after(0, self.update_progress, progress,
+                        f"Processing: {progress}%")
 
     def update_progress(self, value, text):
         self.progress_bar['value'] = value
@@ -302,13 +308,15 @@ class ImageStylerApp:
 
         if os.path.exists(mask_path):
             self.mask_img = cv2.imread(mask_path, 0)
-            
+
             # Resize mask to match content image dimensions
             if self.content_img is not None and self.mask_img is not None:
-                self.mask_img = cv2.resize(self.mask_img, (self.content_img.shape[1], self.content_img.shape[0]), interpolation=cv2.INTER_NEAREST)
-            
+                self.mask_img = cv2.resize(
+                    self.mask_img, (self.content_img.shape[1], self.content_img.shape[0]), interpolation=cv2.INTER_NEAREST)
+
             self.update_mask_classes()
-            self.display_image(self.content_img, self.mask_image_label, overlay=self.mask_img)
+            self.display_image(
+                self.content_img, self.mask_image_label, overlay=self.mask_img)
 
             self.detect_and_display_damages()
         else:
@@ -421,8 +429,11 @@ class ImageStylerApp:
 
                 model_id = self.model_var.get()
                 try:
+                    torch_dtype_str = self.config['model']['floating_point']
+                    # Convert string to torch dtype
+                    torch_dtype = eval(torch_dtype_str)
                     pipe = StableDiffusionInpaintPipeline.from_pretrained(
-                        model_id, torch_dtype=torch.float16, )
+                        model_id, torch_dtype=torch_dtype)
                     pipe = pipe.to("cuda")
                 except RuntimeError as e:
 
@@ -440,7 +451,8 @@ class ImageStylerApp:
                     user_prompt = self.prompt_entry.get()
                     guidance_scale = self.guidance_scale_var.get()
 
-                    init_image = initial_blend_pil.resize((512, 512), Image.LANCZOS)
+                    init_image = initial_blend_pil.resize(
+                        (512, 512), Image.LANCZOS)
                     mask_image = mask_pil.resize((512, 512), Image.LANCZOS)
 
                     try:
@@ -462,11 +474,13 @@ class ImageStylerApp:
 
                     result_cv = cv2.cvtColor(
                         np.array(result_img), cv2.COLOR_RGB2BGR)
-                    result_cv_resized = cv2.resize(result_cv, (x2 - x1, y2 - y1))
+                    result_cv_resized = cv2.resize(
+                        result_cv, (x2 - x1, y2 - y1))
 
                     self.content_img[y1:y2, x1:x2] = result_cv_resized
 
-                    self.display_image(self.content_img, self.result_image_label)
+                    self.display_image(
+                        self.content_img, self.result_image_label)
                     cv2.imwrite(self.RESULT_PATH, self.content_img)
 
                 except Exception as e:
@@ -476,7 +490,7 @@ class ImageStylerApp:
                 finally:
                     self.progress_bar['value'] = 0
                     self.progress_label.config(text="")
-                    self.root.update_idletasks()    
+                    self.root.update_idletasks()
 
     def open_webcam_window(self):
         self.webcam_window = tk.Toplevel(self.root)
@@ -498,7 +512,8 @@ class ImageStylerApp:
 
         # Populate available webcams
         self.webcam_selection_dropdown['values'] = self.get_available_webcams()
-        self.webcam_selection_dropdown.set(self.webcam_selection_dropdown['values'][0])
+        self.webcam_selection_dropdown.set(
+            self.webcam_selection_dropdown['values'][0])
 
         # Initialize webcam
         self.cap = cv2.VideoCapture(int(self.webcam_selection_var.get()))
@@ -512,7 +527,8 @@ class ImageStylerApp:
         ret, frame = self.cap.read()
         if ret:
             self.current_frame = frame
-            self.current_frame_with_mask = self.apply_segmentation_mask(self.current_frame)
+            self.current_frame_with_mask = self.apply_segmentation_mask(
+                self.current_frame)
             self.display_image(self.current_frame_with_mask, self.webcam_label)
             self.webcam_window.after(10, self.update_webcam_feed)
 
@@ -526,10 +542,11 @@ class ImageStylerApp:
             self.load_content_image()
             self.generate_mask_for_image(image_path)
             self.content_img = self.current_frame
-            
+
             self.display_image(self.content_img, self.content_image_label)
-            self.display_image(self.content_img, self.mask_image_label, overlay=self.mask_img)
-            
+            self.display_image(
+                self.content_img, self.mask_image_label, overlay=self.mask_img)
+
             self.webcam_window.destroy()
 
     def generate_mask_for_image(self, image_path):
@@ -537,22 +554,26 @@ class ImageStylerApp:
         predicted_mask = inference(self.segmentation_model, input_tensor)
         self.mask_img = self.decode_mask(predicted_mask, self.LABELS)
 
-        mask_path = os.path.join(self.MASK_FOLDER, os.path.basename(image_path))
+        mask_path = os.path.join(
+            self.MASK_FOLDER, os.path.basename(image_path))
         cv2.imwrite(mask_path, self.mask_img)
-        self.display_image(self.content_img, self.mask_image_label, overlay=self.mask_img)
+        self.display_image(
+            self.content_img, self.mask_image_label, overlay=self.mask_img)
 
         self.detect_and_display_damages()
 
     def decode_mask(self, mask, labels):
         decoded_mask = np.zeros((mask.shape[0], mask.shape[1]), dtype=np.uint8)
         for label, color in labels.items():
-            decoded_mask[np.all(mask == color, axis=-1)] = list(labels.keys()).index(label)
+            decoded_mask[np.all(mask == color, axis=-1)
+                         ] = list(labels.keys()).index(label)
         return decoded_mask
 
     def apply_segmentation_mask(self, frame):
         input_tensor = preprocess_image(frame, self.config)
         predicted_mask = inference(self.segmentation_model, input_tensor)
-        frame_with_mask = overlay_jeans_and_damage(frame, predicted_mask, self.config)
+        frame_with_mask = overlay_jeans_and_damage(
+            frame, predicted_mask, self.config)
         return frame_with_mask
 
     def load_config(self, config_path):
@@ -572,7 +593,8 @@ class ImageStylerApp:
                 class_index = int(selected_class.split()[-1])
 
                 # Resize overlay to match img_rgb dimensions
-                overlay_resized = cv2.resize(overlay, (img_rgb.shape[1], img_rgb.shape[0]), interpolation=cv2.INTER_NEAREST)
+                overlay_resized = cv2.resize(
+                    overlay, (img_rgb.shape[1], img_rgb.shape[0]), interpolation=cv2.INTER_NEAREST)
 
                 red_overlay = np.zeros_like(img_rgb)
                 red_overlay[overlay_resized == class_index] = [255, 0, 0]
@@ -632,11 +654,17 @@ class ImageStylerApp:
 
     def store_previous_state(self):
         # Store the current state for undo functionality
-        self.previous_state['content_img'] = self.content_img.copy() if self.content_img is not None else None
-        self.previous_state['style_img'] = self.style_img.copy() if self.style_img is not None else None
-        self.previous_state['mask_img'] = self.mask_img.copy() if self.mask_img is not None else None
-        self.previous_state['mask_classes'] = self.mask_classes.copy() if self.mask_classes is not None else None
-        self.previous_state['damages'] = self.damages[:] if self.damages is not None else None  # Corrected to clone list
+        self.previous_state['content_img'] = self.content_img.copy(
+        ) if self.content_img is not None else None
+        self.previous_state['style_img'] = self.style_img.copy(
+        ) if self.style_img is not None else None
+        self.previous_state['mask_img'] = self.mask_img.copy(
+        ) if self.mask_img is not None else None
+        self.previous_state['mask_classes'] = self.mask_classes.copy(
+        ) if self.mask_classes is not None else None
+        # Corrected to clone list
+        self.previous_state['damages'] = self.damages[:
+                                                      ] if self.damages is not None else None
 
     def undo_last_action(self):
         # Undo the last action by restoring the previous state
@@ -649,11 +677,13 @@ class ImageStylerApp:
 
             self.display_image(self.content_img, self.content_image_label)
             self.display_image(self.style_img, self.style_image_label)
-            self.display_image(self.content_img, self.mask_image_label, overlay=self.mask_img)
+            self.display_image(
+                self.content_img, self.mask_image_label, overlay=self.mask_img)
             self.display_image(self.content_img, self.result_image_label)
 
             self.update_mask_classes()
             self.detect_and_display_damages()
+
 
 if __name__ == "__main__":
     root = tk.Tk()

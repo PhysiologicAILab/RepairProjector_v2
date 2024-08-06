@@ -1,8 +1,8 @@
 # config.yaml
 paths:
-  image_dir: "/home/farshid/ComputerVisionDev/RepairProjector-1/images/"
-  label_dir: "/home/farshid/ComputerVisionDev/RepairProjector-1/labels/"
-  checkpoint_path: "/home/farshid/ComputerVisionDev/RepairProjector/checkpoints/best-checkpoint-model_name=0-encoder_name=0-epoch=125-val_loss=0.46_use.ckpt"
+  image_dir: "images/"
+  label_dir: "labels/"
+  checkpoint_path: "checkpoints/best-checkpoint-model_name=0-encoder_name=0-epoch=125-val_loss=0.46_use.ckpt"
   checkpoints_dir: "checkpoints"
   logs_dir: "tb_logs"
 
@@ -16,6 +16,7 @@ model:
   encoder_name: "resnet18" #"timm-mobilenetv3_large_100" # resnet18 # mobilenet_v2
   encoder_weights: "imagenet"
   in_channels: 3
+  floating_point: torch.float16
 
 training:
   batch_size: 12

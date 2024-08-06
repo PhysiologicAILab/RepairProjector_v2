@@ -1,6 +1,8 @@
+# Enable GUI 
 xhost +
 
 # Imstall 
+docker build -t diffusers .
 
 
 

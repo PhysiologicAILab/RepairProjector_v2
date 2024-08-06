@@ -94,7 +94,7 @@ ENV DISPLAY=:99
 
 # Start Xvfb before running the application
 # CMD ["sh", "-c", "Xvfb :99 -screen 0 1024x768x16 & gedit temp.sh"]
-# CMD ["sh", "-c", "Xvfb :99 -screen 0 1024x768x16 & sleep 3 && python3 ImageStylerApp.py"]
+CMD ["sh", "-c", "Xvfb :99 -screen 0 1024x768x16 & sleep 3 && python3 ImageStylerApp.py"]
 
 # Set the container's entrypoint to bash and start in interactive mode
 # ENTRYPOINT [ "bash", "-c", "cd /RepairProjector && exec /bin/bash" ]
@@ -124,7 +124,7 @@ RUN  chmod 4755 /usr/bin/sudo
 
 
 # Set environment variable for CUDA
-ENV CUDA_VISIBLE_DEVICES=1
+ENV CUDA_VISIBLE_DEVICES=0,1
 
 # Set the container's entrypoint to bash
-ENTRYPOINT [ "/bin/bash" ]
+# ENTRYPOINT [ "/bin/bash" ]

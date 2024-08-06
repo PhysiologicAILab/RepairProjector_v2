@@ -16,6 +16,7 @@ model:
   encoder_name: "resnet18" #"timm-mobilenetv3_large_100" # resnet18 # mobilenet_v2
   encoder_weights: "imagenet"
   in_channels: 3
+  floating_point: "torch.float16" 
 
 training:
   batch_size: 12

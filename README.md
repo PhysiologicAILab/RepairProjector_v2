@@ -18,7 +18,7 @@ Clone the Repository:
 
 ## Install Dependencies:
 
-Docker (tested on 26.1.2)
+- Docker (tested on 26.1.2)
 
 Set up Docker's apt repository
 

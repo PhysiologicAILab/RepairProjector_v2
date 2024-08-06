@@ -33,7 +33,7 @@ def main():
     config = load_config()
     model = initialize_model(config)
 
-    cap = cv2.VideoCapture(0)  # Change index if necessary
+    cap = cv2.VideoCapture(1)  # Change index if necessary
     if not cap.isOpened():
         print("Error: Could not open camera.")
         return

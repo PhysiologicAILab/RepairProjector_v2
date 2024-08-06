@@ -426,7 +426,7 @@ class ImageStylerApp:
                     pipe = pipe.to("cuda")
                 except RuntimeError as e:
 
-                    error_message = f"An error occurred: {str(e)}"
+                    error_message = f"An error occurred during Initialisation: {str(e)}"
                     print(error_message)
                     tk.messagebox.showerror("Error", error_message)
                     return

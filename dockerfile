@@ -40,7 +40,7 @@ RUN pip install git+https://github.com/qubvel/segmentation_models.pytorch
 
 
 # Clone the RepairProjector repository
-RUN git clone https://github.com/farshidrayhancv/RepairProjector.git /RepairProjector/
+RUN git clone https://github.com/PhysiologicAILab/RepairProjector_v2.git /RepairProjector/
 
 
 # Set working directory

@@ -72,4 +72,4 @@ Prompt and Guidance Scale:
 
 # Screenshots
 
-![Alt text](repairProjector.png?raw=true "Title")
+![Main GUI](repairProjector.png?raw=true "Interface")

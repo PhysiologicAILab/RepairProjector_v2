@@ -18,7 +18,7 @@ Clone the Repository:
 
 ## Install Dependencies:
 
-Docker (tested on 26.1.2)
+    Docker (tested on 26.1.2)
 
 
 
@@ -26,14 +26,16 @@ Docker (tested on 26.1.2)
 Select Images:
 
 Use the listboxes to select a garment and a patch image.
-Detect Damages:
+
 
 The app will automatically detect damages on the selected garment image and display them.
-Generate Repairs:
+
 
 Select a damage area, choose a patch, and set a prompt and guidance scale.
+
 Click on "Apply Style" to generate a repair for the selected damage area.
-Review and Save:
+
+
 
 The repaired image will be displayed in the result image section.
 The result can be saved automatically to the result_img.png file in the root directory.

@@ -4,10 +4,10 @@ The Image Styler App is a proof-of-concept application that demonstrates a compu
 # Features
 1. Damage Detection: Uses semantic segmentation to detect damages on garments.
 2. Repair Generation: Utilizes diffusion models to generate potential repairs for detected damages.
-User Customization: Allows users to select patches, input prompts, and set guidance scales to influence the repair generation process.
-Real-Time Progress: Displays the progress of the repair generation process with a progress bar and status label.
-Undo and Reset: Provides functionality to undo the last action and reset the application to its initial state.
-Webcam Integration: (Currently disabled) Capability to capture images from a webcam for processing.
+3. User Customization: Allows users to select patches, input prompts, and set guidance scales to influence the repair generation process.
+4. Real-Time Progress: Displays the progress of the repair generation process with a progress bar and status label.
+5. Undo and Reset: Provides functionality to undo the last action and reset the application to its initial state.
+6. Webcam Integration: (Currently disabled) Capability to capture images from a webcam for processing.
 
 # Installation
 Clone the Repository:

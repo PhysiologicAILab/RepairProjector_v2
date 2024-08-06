@@ -12,9 +12,8 @@ Webcam Integration: (Currently disabled) Capability to capture images from a web
 # Installation
 Clone the Repository:
 
-git clone https://github.com/your-repo/image-styler-app.git
-
-sudo bash run.sh
+    git clone https://github.com/your-repo/image-styler-app.git
+    sudo bash run.sh
 
 
 ## Install Dependencies:

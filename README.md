@@ -69,3 +69,7 @@ Model Selection:
 Prompt and Guidance Scale:
 
     Customize the repair generation by inputting a prompt and setting the guidance scale.
+
+# Screenshots
+
+![Main GUI](repairProjector.png?raw=true "Interface")

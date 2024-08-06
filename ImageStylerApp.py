@@ -199,10 +199,11 @@ class ImageStylerApp:
         button_width = 20
         button_height = 2
 
+        # Disabled live
         # Add a button to capture an image from the webcam
-        self.capture_button = ttk.Button(
-            self.button_frame, text="Capture Image from Webcam", command=self.open_webcam_window, width=button_width)
-        self.capture_button.grid(row=0, column=0, pady=5, padx=5)
+        # self.capture_button = ttk.Button(
+        #     self.button_frame, text="Capture Image from Webcam", command=self.open_webcam_window, width=button_width)
+        # self.capture_button.grid(row=0, column=0, pady=5, padx=5)
 
         # Add a reset button
         self.reset_button = ttk.Button(

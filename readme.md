@@ -12,7 +12,7 @@ The Image Styler App is a proof-of-concept application that demonstrates a compu
 # Installation
 Clone the Repository:
 
-    git clone https://github.com/your-repo/image-styler-app.git
+    git clone https://github.com/PhysiologicAILab/RepairProjector_v2.git
     sudo bash run.sh
 
 

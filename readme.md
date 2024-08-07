@@ -14,12 +14,36 @@ Clone the Repository:
 
     git clone https://github.com/PhysiologicAILab/RepairProjector_v2.git
     cd RepairProjector_v2
-    sudo bash run.sh
+    
+    # Enable GUI 
+    xhost +
+    
+    # Install 
+    docker build -t diffusers .
+    
+    
+    
+    # Run docker terminal
+    docker run --privileged -it --gpus all --userns host \
+      -p 55555:22 --net=host \
+      --env="DISPLAY" \
+      --env="QT_X11_NO_MITSHM=1" \
+      --device /dev/video0:/dev/video0 \
+      --volume="$HOME/.Xauthority:/home/developer/.Xauthority:rw" \
+      --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+      diffusers
 
+### Inside docker
+    # For the main app
+    python ImageStylerApp.py
+
+    # For the live segmentation model only 
+    python interface.py
+    
 
 ## Install Dependencies:
 
-Docker (tested on 26.1.2)
+- Docker (tested on 26.1.2)
 
 Set up Docker's apt repository
 

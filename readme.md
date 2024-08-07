@@ -13,6 +13,7 @@ The Image Styler App is a proof-of-concept application that demonstrates a compu
 Clone the Repository:
 
     git clone https://github.com/PhysiologicAILab/RepairProjector_v2.git
+    cd RepairProjector_v2
     sudo bash run.sh
 
 

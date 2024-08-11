@@ -647,7 +647,7 @@ class ImageStylerApp:
         webcam_list = []
         for i in range(4):  # Try first 5 indices
             import time
-            time.sleep(2.5)
+            time.sleep(1.5)
             cap = cv2.VideoCapture(i)
             if cap.isOpened():
                 webcam_list.append(i)

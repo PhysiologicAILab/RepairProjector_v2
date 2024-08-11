@@ -96,15 +96,16 @@ Prompt and Guidance Scale:
     Customize the repair generation by inputting a prompt and setting the guidance scale.
 
 # Screenshots
-Main Interface
+
+### Main Interface
 ![Main GUI](repairProjector.png?raw=true "Interface")
 
 
-Main Interface
+### Annotated
 ![Main GUI](web_live_fusion_annt.png?raw=true "Annotated")
 
 
-Live Feed
+### Live Feed
 ![Main GUI](webcam_live_feed_annt.png?raw=true "Annotated")
 
 

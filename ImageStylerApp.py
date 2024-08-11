@@ -509,7 +509,11 @@ class ImageStylerApp:
     def capture_from_webcam(self):
         if self.current_frame_with_mask is not None:
             image_path = os.path.join(self.IMAGES_FOLDER, "captured_image.png")
+            mask_path = os.path.join(self.MASK_FOLDER, "captured_image.png")
+            
             cv2.imwrite(image_path, self.current_frame)
+            cv2.imwrite(mask_path, self.apply_segmentation_mask(self.current_frame, only_mask=True))
+
             self.populate_content_listbox()
             self.garment_listbox.selection_clear(0, tk.END)
             self.garment_listbox.selection_set(tk.END)
@@ -541,10 +545,30 @@ class ImageStylerApp:
             decoded_mask[np.all(mask == color, axis=-1)] = list(labels.keys()).index(label)
         return decoded_mask
 
-    def apply_segmentation_mask(self, frame):
+    def apply_segmentation_mask(self, frame, only_mask = False):
         rgb_image_pil = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         _, predicted_mask = self.segmentation_model.run_inference(rgb_image_pil)
+        
+        rgb_mask = np.zeros_like(predicted_mask)
+        print(type(predicted_mask), predicted_mask.shape, rgb_mask.shape)
+        # Create a mapping for the values
+        color_map = {
+            0: [0, 0, 0],
+            2: [255, 0, 0],
+            1: [0, 0, 255]
+        }
+
+        
+        # Create a 3D array to hold the colors
+        colors = np.array([color_map[i] for i in range(3)], dtype=np.uint8)
+
+        # Use numpy's advanced indexing for efficient assignment
+        rgb_mask = colors[predicted_mask]
+
+
         frame_with_mask = overlay_jeans_and_damage(frame, predicted_mask, self.config)
+        if only_mask:
+            return rgb_mask
         return frame_with_mask
 
     def load_config(self, config_path):

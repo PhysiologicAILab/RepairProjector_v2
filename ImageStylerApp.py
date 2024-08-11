@@ -13,6 +13,7 @@ import yaml
 from rgbt_seg_live.seg.inference import seg_inference  # Updated import
 from segmentation import preprocess_image, overlay_jeans_and_damage
 
+
 class ImageStylerApp:
     ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
     IMAGES_FOLDER = os.path.join(ROOT_PATH, "images")
@@ -59,11 +60,13 @@ class ImageStylerApp:
 
         # Frame for the listboxes
         self.listbox_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.listbox_frame.grid(row=1, column=0, columnspan=3, pady=5, sticky='nsew')
+        self.listbox_frame.grid(
+            row=1, column=0, columnspan=3, pady=5, sticky='nsew')
 
         # Garment listbox
         self.garment_listbox_frame = tk.Frame(self.listbox_frame, bg='#2e2e2e')
-        self.garment_listbox_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.garment_listbox_frame.pack(
+            side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         garment_label = tk.Label(
             self.garment_listbox_frame, text="Garment", bg='#2e2e2e', fg='white')
@@ -76,12 +79,14 @@ class ImageStylerApp:
             self.garment_listbox_frame, orient=tk.VERTICAL, command=self.garment_listbox.yview)
         self.garment_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        self.garment_listbox.configure(yscrollcommand=self.garment_scrollbar.set)
+        self.garment_listbox.configure(
+            yscrollcommand=self.garment_scrollbar.set)
         self.garment_listbox.bind("<<ListboxSelect>>", self.load_content_image)
 
         # Patches listbox
         self.patches_listbox_frame = tk.Frame(self.listbox_frame, bg='#2e2e2e')
-        self.patches_listbox_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        self.patches_listbox_frame.pack(
+            side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
         patches_label = tk.Label(
             self.patches_listbox_frame, text="Patches", bg='#2e2e2e', fg='white')
@@ -94,11 +99,13 @@ class ImageStylerApp:
             self.patches_listbox_frame, orient=tk.VERTICAL, command=self.patches_listbox.yview)
         self.patches_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        self.patches_listbox.configure(yscrollcommand=self.patches_scrollbar.set)
+        self.patches_listbox.configure(
+            yscrollcommand=self.patches_scrollbar.set)
         self.patches_listbox.bind("<<ListboxSelect>>", self.load_style_image)
 
         self.options_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.options_frame.grid(row=2, column=0, columnspan=3, pady=5, sticky='nsew')
+        self.options_frame.grid(
+            row=2, column=0, columnspan=3, pady=5, sticky='nsew')
 
         self.mask_class_label = tk.Label(
             self.options_frame, text="Mask Classes:", bg='#2e2e2e', fg='white')
@@ -107,7 +114,8 @@ class ImageStylerApp:
         self.mask_class_var = tk.StringVar()
         self.mask_class_dropdown = ttk.Combobox(
             self.options_frame, textvariable=self.mask_class_var, state="readonly")
-        self.mask_class_dropdown.grid(row=0, column=1, padx=5, pady=5, sticky='w')
+        self.mask_class_dropdown.grid(
+            row=0, column=1, padx=5, pady=5, sticky='w')
 
         self.model_label = tk.Label(
             self.options_frame, text="Select Model:", bg='#2e2e2e', fg='white')
@@ -122,12 +130,14 @@ class ImageStylerApp:
 
         self.damage_select_label = tk.Label(
             self.options_frame, text="Select Damage Area:", bg='#2e2e2e', fg='white')
-        self.damage_select_label.grid(row=1, column=0, padx=5, pady=5, sticky='w')
+        self.damage_select_label.grid(
+            row=1, column=0, padx=5, pady=5, sticky='w')
 
         self.damage_select_var = tk.StringVar()
         self.damage_select_dropdown = ttk.Combobox(
             self.options_frame, textvariable=self.damage_select_var, state="readonly")
-        self.damage_select_dropdown.grid(row=1, column=1, padx=5, pady=5, sticky='w')
+        self.damage_select_dropdown.grid(
+            row=1, column=1, padx=5, pady=5, sticky='w')
 
         self.apply_style_button = ttk.Button(
             self.options_frame, text="Apply Style", command=self.start_style_thread)
@@ -135,7 +145,8 @@ class ImageStylerApp:
             row=1, column=2, columnspan=2, padx=5, pady=5, sticky='w')
 
         self.guidance_scale_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.guidance_scale_frame.grid(row=3, column=0, columnspan=3, pady=5, sticky='nsew')
+        self.guidance_scale_frame.grid(
+            row=3, column=0, columnspan=3, pady=5, sticky='nsew')
 
         self.guidance_scale_label = tk.Label(
             self.guidance_scale_frame, text="Guidance Scale:", bg='#2e2e2e', fg='white')
@@ -149,7 +160,8 @@ class ImageStylerApp:
         self.create_prompt_entry()
 
         self.image_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.image_frame.grid(row=4, column=0, columnspan=3, pady=10, sticky='nsew')
+        self.image_frame.grid(
+            row=4, column=0, columnspan=3, pady=10, sticky='nsew')
 
         self.init_image_label(self.image_frame, "Garment Image", 0, 0)
         self.init_image_label(self.image_frame, "Patch Image", 0, 1)
@@ -170,7 +182,8 @@ class ImageStylerApp:
         self.damage_count_label.grid(row=5, column=0, columnspan=3, pady=10)
 
         self.progress_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.progress_frame.grid(row=7, column=0, columnspan=3, pady=5, sticky='nsew')
+        self.progress_frame.grid(
+            row=7, column=0, columnspan=3, pady=5, sticky='nsew')
 
         self.progress_bar = ttk.Progressbar(
             self.progress_frame, length=300, mode='determinate')
@@ -204,8 +217,10 @@ class ImageStylerApp:
         self.undo_button.grid(row=1, column=1, pady=5, padx=5)
 
         # Initialize seg_inference model
-        self.config = self.load_config(os.path.join(self.ROOT_PATH, 'config.yaml'))
-        self.segmentation_model = seg_inference(self.config['paths']['checkpoint_path'])
+        self.config = self.load_config(
+            os.path.join(self.ROOT_PATH, 'config.yaml'))
+        self.segmentation_model = seg_inference(
+            self.config['paths']['checkpoint_path'])
 
         # Store the previous state for undo functionality
         self.previous_state = {}
@@ -222,7 +237,8 @@ class ImageStylerApp:
 
     def create_prompt_entry(self):
         self.prompt_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
-        self.prompt_frame.grid(row=6, column=0, columnspan=3, pady=5, sticky='nsew')
+        self.prompt_frame.grid(
+            row=6, column=0, columnspan=3, pady=5, sticky='nsew')
 
         self.prompt_label = tk.Label(
             self.prompt_frame, text="Prompt:", bg='#2e2e2e', fg='white')
@@ -236,7 +252,8 @@ class ImageStylerApp:
         label = tk.Label(frame, text=text, bg='#2e2e2e', fg='white')
         label.grid(row=row * 2, column=col, padx=10, pady=10, sticky='nsew')
         image_label = tk.Label(frame, bg='black')
-        image_label.grid(row=row * 2 + 1, column=col, padx=10, pady=10, sticky='nsew')
+        image_label.grid(row=row * 2 + 1, column=col,
+                         padx=10, pady=10, sticky='nsew')
 
         black_image = np.zeros((256, 256, 3), dtype=np.uint8)
         self.display_image(black_image, image_label)
@@ -253,14 +270,16 @@ class ImageStylerApp:
     def populate_content_listbox(self):
         self.garment_listbox.delete(0, tk.END)
         if os.path.exists(self.IMAGES_FOLDER):
-            image_files = [f for f in os.listdir(self.IMAGES_FOLDER) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+            image_files = [f for f in os.listdir(
+                self.IMAGES_FOLDER) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
             for image_file in image_files:
                 self.garment_listbox.insert(tk.END, image_file)
 
     def populate_style_listbox(self):
         self.patches_listbox.delete(0, tk.END)
         if os.path.exists(self.PATCHES_FOLDER):
-            image_files = [f for f in os.listdir(self.PATCHES_FOLDER) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+            image_files = [f for f in os.listdir(
+                self.PATCHES_FOLDER) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
             for image_file in image_files:
                 self.patches_listbox.insert(tk.END, image_file)
 
@@ -296,7 +315,8 @@ class ImageStylerApp:
                     self.mask_img, (self.content_img.shape[1], self.content_img.shape[0]), interpolation=cv2.INTER_NEAREST)
 
             self.update_mask_classes()
-            self.display_image(self.content_img, self.mask_image_label, overlay=self.mask_img)
+            self.display_image(
+                self.content_img, self.mask_image_label, overlay=self.mask_img)
 
             self.detect_and_display_damages()
         else:
@@ -314,7 +334,8 @@ class ImageStylerApp:
             unique_classes = np.unique(self.mask_img)
             self.mask_classes = [
                 f"Class {c}" for c in unique_classes if c != 0]
-            self.mask_classes.sort(key=lambda x: int(x.split()[-1]), reverse=True)
+            self.mask_classes.sort(
+                key=lambda x: int(x.split()[-1]), reverse=True)
             self.mask_class_dropdown['values'] = self.mask_classes
             if self.mask_classes:
                 self.mask_class_dropdown.set(self.mask_classes[0])
@@ -324,7 +345,8 @@ class ImageStylerApp:
 
     def update_mask_display(self, event=None):
         if self.content_img is not None and self.mask_img is not None:
-            self.display_image(self.content_img, self.mask_image_label, overlay=self.mask_img)
+            self.display_image(
+                self.content_img, self.mask_image_label, overlay=self.mask_img)
 
     def detect_and_display_damages(self):
         selected_class = self.mask_class_var.get()
@@ -338,7 +360,8 @@ class ImageStylerApp:
                 binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             damage_count = len(contours)
 
-            self.damage_count_label.config(text=f"Detected Damages: {damage_count}")
+            self.damage_count_label.config(
+                text=f"Detected Damages: {damage_count}")
 
             self.damages = contours
             self.damage_select_dropdown['values'] = [
@@ -455,7 +478,8 @@ class ImageStylerApp:
 
                     self.content_img[y1:y2, x1:x2] = result_cv_resized
 
-                    self.display_image(self.content_img, self.result_image_label)
+                    self.display_image(
+                        self.content_img, self.result_image_label)
                     cv2.imwrite(self.RESULT_PATH, self.content_img)
 
                 except Exception as e:
@@ -487,8 +511,14 @@ class ImageStylerApp:
 
         # Populate available webcams
         self.webcam_selection_dropdown['values'] = self.get_available_webcams()
-        self.webcam_selection_dropdown.set(
-            self.webcam_selection_dropdown['values'][0])
+        print("============================================")
+        print(self.get_available_webcams())
+        if len(self.webcam_selection_dropdown['values']) > 1:
+            self.webcam_selection_dropdown.set(
+                self.webcam_selection_dropdown['values'][1])
+        else:
+            self.webcam_selection_dropdown.set(
+                self.webcam_selection_dropdown['values'][0])
 
         # Initialize webcam
         self.cap = cv2.VideoCapture(int(self.webcam_selection_var.get()))
@@ -502,7 +532,8 @@ class ImageStylerApp:
         ret, frame = self.cap.read()
         if ret:
             self.current_frame = frame
-            self.current_frame_with_mask = self.apply_segmentation_mask(self.current_frame)
+            self.current_frame_with_mask = self.apply_segmentation_mask(
+                self.current_frame)
             self.display_image(self.current_frame_with_mask, self.webcam_label)
             self.webcam_window.after(10, self.update_webcam_feed)
 
@@ -510,9 +541,10 @@ class ImageStylerApp:
         if self.current_frame_with_mask is not None:
             image_path = os.path.join(self.IMAGES_FOLDER, "captured_image.png")
             mask_path = os.path.join(self.MASK_FOLDER, "captured_image.png")
-            
+
             cv2.imwrite(image_path, self.current_frame)
-            cv2.imwrite(mask_path, self.apply_segmentation_mask(self.current_frame, only_mask=True))
+            cv2.imwrite(mask_path, self.apply_segmentation_mask(
+                self.current_frame, only_mask=True))
 
             self.populate_content_listbox()
             self.garment_listbox.selection_clear(0, tk.END)
@@ -522,51 +554,58 @@ class ImageStylerApp:
             self.content_img = self.current_frame
 
             self.display_image(self.content_img, self.content_image_label)
-            self.display_image(self.content_img, self.mask_image_label, overlay=self.mask_img)
+            self.display_image(
+                self.content_img, self.mask_image_label, overlay=self.mask_img)
 
             self.webcam_window.destroy()
 
     def generate_mask_for_image(self, image_path):
         # Use seg_inference instead of previous model
-        rgb_image_pil = Image.fromarray(cv2.cvtColor(self.content_img, cv2.COLOR_BGR2RGB))
-        _, predicted_mask = self.segmentation_model.run_inference(rgb_image_pil)
+        rgb_image_pil = Image.fromarray(
+            cv2.cvtColor(self.content_img, cv2.COLOR_BGR2RGB))
+        _, predicted_mask = self.segmentation_model.run_inference(
+            rgb_image_pil)
 
         self.mask_img = self.decode_mask(predicted_mask, self.LABELS)
 
-        mask_path = os.path.join(self.MASK_FOLDER, os.path.basename(image_path))
+        mask_path = os.path.join(
+            self.MASK_FOLDER, os.path.basename(image_path))
         cv2.imwrite(mask_path, self.mask_img)
-        self.display_image(self.content_img, self.mask_image_label, overlay=self.mask_img)
+        self.display_image(
+            self.content_img, self.mask_image_label, overlay=self.mask_img)
 
         self.detect_and_display_damages()
 
     def decode_mask(self, mask, labels):
         decoded_mask = np.zeros((mask.shape[0], mask.shape[1]), dtype=np.uint8)
         for label, color in labels.items():
-            decoded_mask[np.all(mask == color, axis=-1)] = list(labels.keys()).index(label)
+            decoded_mask[np.all(mask == color, axis=-1)
+                         ] = list(labels.keys()).index(label)
         return decoded_mask
 
-    def apply_segmentation_mask(self, frame, only_mask = False):
+    def apply_segmentation_mask(self, frame, only_mask=False):
         rgb_image_pil = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        _, predicted_mask = self.segmentation_model.run_inference(rgb_image_pil)
-        
+        _, predicted_mask = self.segmentation_model.run_inference(
+            rgb_image_pil)
+
         rgb_mask = np.zeros_like(predicted_mask)
-        print(type(predicted_mask), predicted_mask.shape, rgb_mask.shape)
         # Create a mapping for the values
+
+        # TODO: THis needs to match with self.LABELS. Currently the jeans and damage class are reversed
         color_map = {
             0: [0, 0, 0],
             2: [255, 0, 0],
             1: [0, 0, 255]
         }
 
-        
         # Create a 3D array to hold the colors
         colors = np.array([color_map[i] for i in range(3)], dtype=np.uint8)
 
         # Use numpy's advanced indexing for efficient assignment
         rgb_mask = colors[predicted_mask]
 
-
-        frame_with_mask = overlay_jeans_and_damage(frame, predicted_mask, self.config)
+        frame_with_mask = overlay_jeans_and_damage(
+            frame, predicted_mask, self.config)
         if only_mask:
             return rgb_mask
         return frame_with_mask
@@ -588,7 +627,8 @@ class ImageStylerApp:
                 class_index = int(selected_class.split()[-1])
 
                 # Resize overlay to match img_rgb dimensions
-                overlay_resized = cv2.resize(overlay, (img_rgb.shape[1], img_rgb.shape[0]), interpolation=cv2.INTER_NEAREST)
+                overlay_resized = cv2.resize(
+                    overlay, (img_rgb.shape[1], img_rgb.shape[0]), interpolation=cv2.INTER_NEAREST)
 
                 red_overlay = np.zeros_like(img_rgb)
                 red_overlay[overlay_resized == class_index] = [255, 0, 0]
@@ -604,18 +644,15 @@ class ImageStylerApp:
         label.image = img_tk
 
     def get_available_webcams(self):
-        index = 0
-        available_webcams = []
-        while True:
-            cap = cv2.VideoCapture(index)
-            if not cap.read()[0]:
-                break
-            else:
-                available_webcams.append(str(index))
-            cap.release()
-            index += 1
-
-        return available_webcams
+        webcam_list = []
+        for i in range(4):  # Try first 5 indices
+            import time
+            time.sleep(2.5)
+            cap = cv2.VideoCapture(i)
+            if cap.isOpened():
+                webcam_list.append(i)
+                cap.release()
+        return webcam_list
 
     def reset_application(self):
         self.content_img = None
@@ -646,11 +683,16 @@ class ImageStylerApp:
         self.display_image(black_image, self.result_image_label)
 
     def store_previous_state(self):
-        self.previous_state['content_img'] = self.content_img.copy() if self.content_img is not None else None
-        self.previous_state['style_img'] = self.style_img.copy() if self.style_img is not None else None
-        self.previous_state['mask_img'] = self.mask_img.copy() if self.mask_img is not None else None
-        self.previous_state['mask_classes'] = self.mask_classes.copy() if self.mask_classes is not None else None
-        self.previous_state['damages'] = self.damages[:] if self.damages is not None else None
+        self.previous_state['content_img'] = self.content_img.copy(
+        ) if self.content_img is not None else None
+        self.previous_state['style_img'] = self.style_img.copy(
+        ) if self.style_img is not None else None
+        self.previous_state['mask_img'] = self.mask_img.copy(
+        ) if self.mask_img is not None else None
+        self.previous_state['mask_classes'] = self.mask_classes.copy(
+        ) if self.mask_classes is not None else None
+        self.previous_state['damages'] = self.damages[:
+                                                      ] if self.damages is not None else None
 
     def undo_last_action(self):
         if self.previous_state:
@@ -662,7 +704,8 @@ class ImageStylerApp:
 
             self.display_image(self.content_img, self.content_image_label)
             self.display_image(self.style_img, self.style_image_label)
-            self.display_image(self.content_img, self.mask_image_label, overlay=self.mask_img)
+            self.display_image(
+                self.content_img, self.mask_image_label, overlay=self.mask_img)
             self.display_image(self.content_img, self.result_image_label)
 
             self.update_mask_classes()

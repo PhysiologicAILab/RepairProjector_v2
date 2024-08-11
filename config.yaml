@@ -2,7 +2,9 @@
 paths:
   image_dir: "images/"
   label_dir: "labels/"
-  checkpoint_path: "checkpoints/best-checkpoint-model_name=0-encoder_name=0-epoch=125-val_loss=0.46_use.ckpt"
+  # checkpoint_path: "checkpoints/best-checkpoint-model_name=0-encoder_name=0-epoch=125-val_loss=0.46_use.ckpt"
+  
+  checkpoint_path: "checkpoints/model.pth"
   checkpoints_dir: "checkpoints"
   logs_dir: "tb_logs"
 

@@ -40,14 +40,15 @@ RUN pip install git+https://github.com/qubvel/segmentation_models.pytorch
 
 
 # Clone the RepairProjector repository
-RUN git clone https://github.com/PhysiologicAILab/RepairProjector_v2.git /RepairProjector/
+RUN git clone -b development https://github.com/PhysiologicAILab/RepairProjector_v2.git /RepairProjector/
 
 
 # Set working directory
 WORKDIR /RepairProjector/checkpoints/
 
 # Use gdown to download the file
-RUN gdown "https://drive.google.com/uc?id=1VBTP3elqHbTkYlCLzNMxrjsvVX5hlA-Z"
+# RUN gdown "https://drive.google.com/uc?id=1VBTP3elqHbTkYlCLzNMxrjsvVX5hlA-Z"
+RUN gdown "https://drive.google.com/file/d/10A9wEmCe4YS7o0VL14j93duYdwqj89wl"
 
 
 RUN pip install segmentation-models-pytorch==0.3.3 timm==0.9.2
@@ -94,7 +95,7 @@ ENV DISPLAY=:99
 
 # Start Xvfb before running the application
 # CMD ["sh", "-c", "Xvfb :99 -screen 0 1024x768x16 & gedit temp.sh"]
-CMD ["sh", "-c", "Xvfb :99 -screen 0 1024x768x16 & sleep 3 && python3 ImageStylerApp.py"]
+# CMD ["sh", "-c", "Xvfb :99 -screen 0 1024x768x16 & sleep 3 && python3 ImageStylerApp.py"]
 
 # Set the container's entrypoint to bash and start in interactive mode
 # ENTRYPOINT [ "bash", "-c", "cd /RepairProjector && exec /bin/bash" ]
@@ -127,4 +128,4 @@ RUN  chmod 4755 /usr/bin/sudo
 ENV CUDA_VISIBLE_DEVICES=0,1
 
 # Set the container's entrypoint to bash
-# ENTRYPOINT [ "/bin/bash" ]
+ENTRYPOINT [ "/bin/bash" ]

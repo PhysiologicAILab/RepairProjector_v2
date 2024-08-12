@@ -105,6 +105,23 @@ Prompt and Guidance Scale:
 ![Main GUI](web_live_fusion_annt.png?raw=true "Annotated")
 
 
+- 1. Shows a selection of sample garment with one of more damages
+- 2. Number of classes ie Jeans, Damage and Background. By default it selects the damages area 
+- 3. This ropdown menu allows the use to select which damage they want to work on
+- 4. Guidence scale allows the user to influence the model from a scale of 0 to 10
+- 5. Apply Style button uses computer vision technique to apply the patch on to the damages area
+- 6. Select model allows the user to select diffierent model that projects the repair work
+- 7. Shows a selection of sample patches 
+- 8. These two button allows user to undo last action and resest the app
+- 9. Calture image button opens a new wondow where the user can see live preview of the damage detector 
+- 10. User modifiable prompt as instructions for the diffision model 
+- 11. Progress bar shows the progress of the "apply style" operation
+- 12. Number of damges found by the app on the selected garment
+- 13. Capture Button allows the user to capture a image from the live feed
+- 14. Dropdown allows to select users prefered webcam. Default 0 selected
+- 15. Live feed shows damaged areas in blue 
+
+
 ### Live Feed
 ![Main GUI](webcam_live_feed_annt.png?raw=true "Annotated")
 

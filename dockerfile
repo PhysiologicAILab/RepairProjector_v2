@@ -51,7 +51,7 @@ WORKDIR /RepairProjector/checkpoints/
 RUN gdown "https://drive.google.com/uc?id=10A9wEmCe4YS7o0VL14j93duYdwqj89wl"
 
 
-RUN pip install segmentation-models-pytorch==0.3.3 timm==0.9.2
+RUN pip install segmentation-models-pytorch==0.3.3 timm==0.9.2 pyside6
 
 
 

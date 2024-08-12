@@ -21,6 +21,8 @@ class ImageStylerApp:
     MASK_FOLDER = os.path.join(ROOT_PATH, "mask")
     BANNER_PATH = os.path.join(ROOT_PATH, "banner.png")
     RESULT_PATH = os.path.join(ROOT_PATH, "result_img.png")
+    INNIT_BLEND_PATH = os.path.join(ROOT_PATH, "initial_blend_img.png")
+    
 
     MODEL_OPTIONS = [
         "runwayml/stable-diffusion-inpainting",
@@ -38,7 +40,7 @@ class ImageStylerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Image Styler App")
-        self.root.geometry("1200x880")
+        self.root.geometry("1200x920")
         self.root.configure(bg='#2e2e2e')
 
         self.DEFAULT_PROMPT = "Visibly add stitching at the edge of the mask, obvious textile patch, contrasting fabric and color, clear distinction between original and repair"
@@ -238,7 +240,7 @@ class ImageStylerApp:
     def create_prompt_entry(self):
         self.prompt_frame = tk.Frame(self.main_frame, bg='#2e2e2e')
         self.prompt_frame.grid(
-            row=6, column=0, columnspan=3, pady=5, sticky='nsew')
+            row=6, column=0, columnspan=3, pady=2, sticky='nsew')
 
         self.prompt_label = tk.Label(
             self.prompt_frame, text="Prompt:", bg='#2e2e2e', fg='white')
@@ -427,6 +429,8 @@ class ImageStylerApp:
                     cv2.cvtColor(initial_blend, cv2.COLOR_BGR2RGB))
                 mask_pil = Image.fromarray(mask_img_resized)
 
+                cv2.imwrite(self.INNIT_BLEND_PATH, initial_blend)
+
                 model_id = self.model_var.get()
                 try:
                     torch_dtype_str = self.config['model']['floating_point']
@@ -453,6 +457,8 @@ class ImageStylerApp:
                     init_image = initial_blend_pil.resize(
                         (512, 512), Image.LANCZOS)
                     mask_image = mask_pil.resize((512, 512), Image.LANCZOS)
+
+                    
 
                     try:
                         result_img = pipe(

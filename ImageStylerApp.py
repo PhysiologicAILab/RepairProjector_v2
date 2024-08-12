@@ -20,8 +20,8 @@ class ImageStylerApp:
     PATCHES_FOLDER = os.path.join(ROOT_PATH, "patches")
     MASK_FOLDER = os.path.join(ROOT_PATH, "mask")
     BANNER_PATH = os.path.join(ROOT_PATH, "banner.png")
-    RESULT_PATH = os.path.join(ROOT_PATH, "result_img.png")
-    INNIT_BLEND_PATH = os.path.join(ROOT_PATH, "initial_blend_img.png")
+    RESULT_PATH = os.path.join(ROOT_PATH + "/results/", "result_img.png")
+    INNIT_BLEND_PATH = os.path.join(ROOT_PATH + "/results/", "initial_blend_img.png")
     
 
     MODEL_OPTIONS = [

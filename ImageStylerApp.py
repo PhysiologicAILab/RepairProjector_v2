@@ -40,10 +40,10 @@ class ImageStylerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Image Styler App")
-        self.root.geometry("1200x920")
+        self.root.geometry("1420x920")
         self.root.configure(bg='#2e2e2e')
 
-        self.DEFAULT_PROMPT = "Visibly add stitching at the edge of the mask, obvious textile patch, contrasting fabric and color, clear distinction between original and repair"
+        self.DEFAULT_PROMPT = "Visibly add stitching at the edge of the mask, dont change anything else"
 
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_columnconfigure(0, weight=1)
@@ -168,11 +168,13 @@ class ImageStylerApp:
         self.init_image_label(self.image_frame, "Garment Image", 0, 0)
         self.init_image_label(self.image_frame, "Patch Image", 0, 1)
         self.init_image_label(self.image_frame, "Damaged Garment", 0, 2)
-        self.init_image_label(self.image_frame, "Result Image", 0, 3)
+        self.init_image_label(self.image_frame, "Initial Repair", 0, 3)        
+        self.init_image_label(self.image_frame, "Result Image", 0, 4)
 
         self.content_img = None
         self.style_img = None
         self.mask_img = None
+        self.initial_blend_img = None  # Highlighted: Added to store initial blend image
         self.mask_classes = None
         self.damages = []
 
@@ -266,6 +268,8 @@ class ImageStylerApp:
             self.style_image_label = image_label
         elif text == "Damaged Garment":
             self.mask_image_label = image_label
+        elif text == "Initial Repair":
+            self.init_repair_image_label = image_label
         elif text == "Result Image":
             self.result_image_label = image_label
 
@@ -430,6 +434,12 @@ class ImageStylerApp:
                 mask_pil = Image.fromarray(mask_img_resized)
 
                 cv2.imwrite(self.INNIT_BLEND_PATH, initial_blend)
+
+                # Display initial blend as "Initial Repair"
+                self.display_image(initial_blend, self.init_repair_image_label)
+
+                # Store the initial blend image
+                self.initial_blend_img = initial_blend  # Highlighted: Storing initial blend
 
                 model_id = self.model_var.get()
                 try:
@@ -664,6 +674,7 @@ class ImageStylerApp:
         self.content_img = None
         self.style_img = None
         self.mask_img = None
+        self.initial_blend_img = None  # Highlighted: Reset initial blend image
         self.mask_classes = None
         self.damages = []
         self.previous_state = {}
@@ -675,6 +686,7 @@ class ImageStylerApp:
         self.style_image_label.config(image='')
         self.mask_image_label.config(image='')
         self.result_image_label.config(image='')
+        self.init_repair_image_label.config(image='')  # Highlighted: Reset Initial Repair image
 
         self.mask_class_dropdown.set('')
         self.damage_select_dropdown.set('')
@@ -687,6 +699,7 @@ class ImageStylerApp:
         self.display_image(black_image, self.style_image_label)
         self.display_image(black_image, self.mask_image_label)
         self.display_image(black_image, self.result_image_label)
+        self.display_image(black_image, self.init_repair_image_label)  # Highlighted: Display black image in Initial Repair
 
     def store_previous_state(self):
         self.previous_state['content_img'] = self.content_img.copy(
@@ -695,6 +708,8 @@ class ImageStylerApp:
         ) if self.style_img is not None else None
         self.previous_state['mask_img'] = self.mask_img.copy(
         ) if self.mask_img is not None else None
+        self.previous_state['initial_blend_img'] = self.initial_blend_img.copy(  # Highlighted: Store Initial Repair image
+        ) if self.initial_blend_img is not None else None
         self.previous_state['mask_classes'] = self.mask_classes.copy(
         ) if self.mask_classes is not None else None
         self.previous_state['damages'] = self.damages[:
@@ -705,6 +720,7 @@ class ImageStylerApp:
             self.content_img = self.previous_state['content_img']
             self.style_img = self.previous_state['style_img']
             self.mask_img = self.previous_state['mask_img']
+            self.initial_blend_img = self.previous_state['initial_blend_img']  # Highlighted: Restore Initial Repair image
             self.mask_classes = self.previous_state['mask_classes']
             self.damages = self.previous_state['damages']
 
@@ -712,6 +728,7 @@ class ImageStylerApp:
             self.display_image(self.style_img, self.style_image_label)
             self.display_image(
                 self.content_img, self.mask_image_label, overlay=self.mask_img)
+            self.display_image(self.initial_blend_img, self.init_repair_image_label)  # Highlighted: Display restored Initial Repair image
             self.display_image(self.content_img, self.result_image_label)
 
             self.update_mask_classes()

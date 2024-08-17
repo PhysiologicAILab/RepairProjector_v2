@@ -2,7 +2,7 @@
 xhost +
 
 # Imstall 
-docker build -t diffusers .
+docker build -t repair_projv2 .
 
 
 
@@ -14,4 +14,4 @@ docker run --privileged -it --gpus all --userns host \
   --device /dev/video0:/dev/video0 \
   --volume="$HOME/.Xauthority:/home/developer/.Xauthority:rw" \
   --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-  diffusers
+  repair_projv2
